@@ -1,0 +1,14 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Han's Plant Party</title>
+      {% else %}
+      <title>Welcome to the party!</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>Site: <a href="/index">Home</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
