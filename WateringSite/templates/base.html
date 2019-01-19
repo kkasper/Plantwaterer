@@ -11,11 +11,13 @@
             <a href="{{ url_for('home') }}">Home</a>
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register a new user</a>
             {% else %}
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
             {% if not current_user.is_anonymous %}
-            <a href="{{ url_for('register') }}">Register a new user</a>
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('new_device') }}">Register a new device</a>
             {% endif %}
         </div>
         <hr>

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Update your email</h1>
+    <form1 action="" method="post">
+        {{ form1.hidden_tag() }}
+        <p>
+            {{ form1.email.label }}<br>
+            {{ form1.email(size=64) }}<br>
+            {% for error in form1.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form1.email2.label }}<br>
+            {{ form1.email2(size=64) }}<br>
+            {% for error in form1.email2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>{{ form1.updateEmailSubmit() }}</p>
+    </form1>
+
+    <h1>Add a new device to your account</h1>
+    <form2 action="" method="post">
+        {{ form2.hidden_tag() }}
+        <p>
+            {{ form2.deviceID.label }}<br>
+            {{ form2.deviceID(size=64) }}<br>
+            {% for error in form2.deviceID.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form2.deviceKey.label }}<br>
+            {{ form2.deviceKey(size=32) }}<br>
+            {% for error in form2.deviceKey.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>{{ form2.addDeviceIDSubmit() }}</p>
+    </form2>
+
+    <h1>Remove a device from your account</h1>
+    <form3 action="" method="post">
+        {{ form3.hidden_tag() }}
+        <p>
+            {{ form3.deviceID.label }}<br>
+            {{ form3.deviceID(size=64) }}<br>
+            {% for error in form3.deviceID.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>{{ form3.removeDeviceSubmit() }}</p>
+    </form3>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from WateringSite import app, db
 from flask import render_template, flash, redirect, url_for, request
-from WateringSite.forms import LoginForm, RegistrationForm
+from WateringSite.forms import *
 from flask_login import current_user, login_user, logout_user, login_required
 from WateringSite.models import User
 from werkzeug.urls import url_parse
@@ -46,7 +46,6 @@ def logout():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-@login_required
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -54,6 +53,42 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you have registered a new user!')
+        flash('You have registered a new user account!')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
+
+
+# TODO: Add profile HTML and finish form handling
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form1 = UpdateEmailForm()
+    form2 = AddDeviceForm()
+    form3 = RemoveDeviceForm()
+    if form1.updateEmailSubmit.data and form1.validate():
+            current_user.email = form1.email
+            db.session.commit()
+            flash('Email updated!')
+            return redirect(url_for('home'))
+    if form2.addDeviceIDSubmit.data and form2.validate():
+        print("test")
+    if form3.removeDeviceSubmit.data and form3.validate():
+        # TODO: Enumerate devices owned / guest devices
+        print("test2")
+
+    return render_template('profile.html', title='User Profile', form1=form1, form2=form2, form3=form3)
+
+
+# TODO: Managing device serial and passkeys
+@app.route('/new_device', methods=['GET', 'POST'])
+@login_required
+def new_device():
+    form = NewDeviceForm()
+    if form.validate_on_submit():
+        device = Device.query.filter_by(id=form.device_id.data).first()
+        device.owner = current_user
+
+        db.session.commit()
+        flash('You have registered a new device!')
+        return redirect(url_for('home'))
+    return render_template('new_device.html', title='Register new device', form=form)
