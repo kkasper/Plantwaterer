@@ -66,7 +66,7 @@ def profile():
     form2 = AddDeviceForm()
     form3 = RemoveDeviceForm()
     if form1.updateEmailSubmit.data and form1.validate():
-            current_user.email = form1.email
+            current_user.email = form1.email.data
             db.session.commit()
             flash('Email updated!')
             return redirect(url_for('home'))
@@ -79,15 +79,14 @@ def profile():
     return render_template('profile.html', title='User Profile', form1=form1, form2=form2, form3=form3)
 
 
-# TODO: Managing device serial and passkeys
 @app.route('/new_device', methods=['GET', 'POST'])
 @login_required
 def new_device():
     form = NewDeviceForm()
     if form.validate_on_submit():
-        device = Device.query.filter_by(id=form.device_id.data).first()
-        device.owner = current_user
-
+        device = Device(id=form.new_device_id.data, key=form.device_key.data, owner=current_user.id,
+                        device_name=form.device_name.data)
+        db.session.add(device)
         db.session.commit()
         flash('You have registered a new device!')
         return redirect(url_for('home'))

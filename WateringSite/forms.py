@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from WateringSite.models import User, Device
+from flask import flash
 
 
 # The fields for form pages. Handles variables/validation
@@ -34,13 +35,15 @@ class RegistrationForm(FlaskForm):
 
 # Registering brand new (unowned) devices
 class NewDeviceForm(FlaskForm):
-    device_id = StringField('Device ID', validators=[DataRequired()])
-    device_key = StringField('Device Passkey', validators=[DataRequired()])
+    new_device_id = IntegerField('Device ID:', validators=[DataRequired()])
+    device_key = IntegerField('Device Secret Passkey:', validators=[DataRequired()])
+    device_key2 = IntegerField('Device Secret Passkey (repeat):', validators=[DataRequired(), EqualTo('device_key')])
+    device_name = StringField('Device name:')
     submit = SubmitField('Register unowned device')
 
-    def validate_devicekey(self, device_id, device_key):
-        device = Device.query.filter_by(id=device_id.data).first()
-        if device is not None:
+    def validate_new_device_id(self, new_device_id):
+        dev = Device.query.filter_by(id=new_device_id.data).first()
+        if dev is not None:
             raise ValidationError('Device already exists in system.')
 
 
@@ -58,11 +61,16 @@ class UpdateEmailForm(FlaskForm):
 
 # Adding and removing active devices from accounts
 class AddDeviceForm(FlaskForm):
-    deviceID = StringField('Device ID:')
-    deviceKey = StringField('Device key:')
+    device_id = IntegerField('Device ID:', validators=[DataRequired()])
+    device_key = IntegerField('Device key:', validators=[DataRequired()])
     addDeviceIDSubmit = SubmitField('Add new Device')
+
+    def validate_devicekey(self, device_id):
+        device = Device.query.filter_by(id=device_id.data).first()
+        if device is None:
+            raise ValidationError('Device does not exist in system. ')
 
 
 class RemoveDeviceForm(FlaskForm):
-    deviceID = StringField('Device ID:')
+    device_id = IntegerField('Device ID:', validators=[DataRequired()])
     removeDeviceSubmit = SubmitField('Remove Device from Account')

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
     {% for WateringEvent in wateringevents %}
     <div><p>{{ WateringEvent.author.username }} watered the plants at: <b>{{ WateringEvent.timestamp }}</b></p></div>
     {% endfor %}

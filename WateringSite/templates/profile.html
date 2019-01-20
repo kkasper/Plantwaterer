@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <br>
     <h1>Update your email</h1>
-    <form1 action="" method="post">
+    <form action="" method="post">
         {{ form1.hidden_tag() }}
         <p>
             {{ form1.email.label }}<br>
@@ -20,41 +22,41 @@
         </p>
 
         <p>{{ form1.updateEmailSubmit() }}</p>
-    </form1>
+    </form>
 
     <h1>Add a new device to your account</h1>
-    <form2 action="" method="post">
+    <form action="" method="post">
         {{ form2.hidden_tag() }}
         <p>
-            {{ form2.deviceID.label }}<br>
-            {{ form2.deviceID(size=64) }}<br>
-            {% for error in form2.deviceID.errors %}
+            {{ form2.device_id.label }}<br>
+            {{ form2.device_id(size=64) }}<br>
+            {% for error in form2.device_id.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
-            {{ form2.deviceKey.label }}<br>
-            {{ form2.deviceKey(size=32) }}<br>
-            {% for error in form2.deviceKey.errors %}
+            {{ form2.device_key.label }}<br>
+            {{ form2.device_key(size=32) }}<br>
+            {% for error in form2.device_key.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
 
         <p>{{ form2.addDeviceIDSubmit() }}</p>
-    </form2>
+    </form>
 
     <h1>Remove a device from your account</h1>
-    <form3 action="" method="post">
+    <form action="" method="post">
         {{ form3.hidden_tag() }}
         <p>
-            {{ form3.deviceID.label }}<br>
-            {{ form3.deviceID(size=64) }}<br>
-            {% for error in form3.deviceID.errors %}
+            {{ form3.device_id.label }}<br>
+            {{ form3.device_id(size=64) }}<br>
+            {% for error in form3.device_id.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
 
         <p>{{ form3.removeDeviceSubmit() }}</p>
-    </form3>
+    </form>
 
 {% endblock %}
