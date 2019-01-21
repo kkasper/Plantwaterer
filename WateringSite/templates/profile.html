@@ -24,19 +24,39 @@
         <p>{{ form1.updateEmailSubmit() }}</p>
     </form>
 
-    <h1>Add a new device to your account</h1>
+
+    <h1>Manage Devices</h1>
+        <table style="width:50%">
+            <tr>
+                <th>Device ID</th>
+                <th>Device Name</th>
+                <th>Device Passkey</th>
+                <th>Device Owner</th>
+            </tr>
+            {% for device in devices %}
+            <tr>
+
+                    <th>{{ device.id }}</th>
+                    <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
+                    <th>{{ device.key }}</th>
+                    <th>{{ User.get_by_id(device.owner).email }}</th>
+
+            </tr>
+            {% endfor %}
+        </table>
+
     <form action="" method="post">
         {{ form2.hidden_tag() }}
         <p>
             {{ form2.device_id.label }}<br>
-            {{ form2.device_id(size=64) }}<br>
+            {{ form2.device_id(size=16) }}<br>
             {% for error in form2.device_id.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form2.device_key.label }}<br>
-            {{ form2.device_key(size=32) }}<br>
+            {{ form2.device_key(size=16) }}<br>
             {% for error in form2.device_key.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
@@ -44,19 +64,4 @@
 
         <p>{{ form2.addDeviceIDSubmit() }}</p>
     </form>
-
-    <h1>Remove a device from your account</h1>
-    <form action="" method="post">
-        {{ form3.hidden_tag() }}
-        <p>
-            {{ form3.device_id.label }}<br>
-            {{ form3.device_id(size=64) }}<br>
-            {% for error in form3.device_id.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-
-        <p>{{ form3.removeDeviceSubmit() }}</p>
-    </form>
-
 {% endblock %}

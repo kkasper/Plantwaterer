@@ -34,3 +34,32 @@
 2019-01-19 21:34:57,391 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
 2019-01-19 21:37:21,979 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
 2019-01-19 21:38:22,267 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:11:42,512 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:11:47,767 ERROR: Exception on /profile [GET] [in c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py:1761]
+Traceback (most recent call last):
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1718, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\_compat.py", line 35, in reraise
+    raise value
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\routes.py", line 75, in profile
+    if form3.removeDeviceSubmit.data and form3.validate():
+AttributeError: 'RemoveDevicesForm' object has no attribute 'removeDeviceSubmit'
+2019-01-20 13:16:31,793 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:16:38,705 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:26:26,517 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:30:22,125 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:32:43,054 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 13:33:37,897 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:32]
+2019-01-20 21:51:43,960 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:34]
+2019-01-20 22:10:55,346 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:34]
+2019-01-20 22:22:27,112 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:34]

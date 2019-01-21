@@ -3,7 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_login import UserMixin
 from WateringSite import login
-
+from time import time
+import jwt
+from WateringSite import app
 
 # Creating the user table
 class User(UserMixin, db.Model):
@@ -13,7 +15,7 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
     watering_events = db.relationship('WateringEvent', backref='author', lazy='dynamic')
-    devices = db.relationship('Device', secondary='user_device', backref="users")
+    devices = db.relationship('Device', secondary='user_device', back_populates="users")
 
     def __repr__(self):
         return '<User {} {} [{}]>'.format(self.id, self.username, self.email)
@@ -23,6 +25,23 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_by_id(self, get_id):
+        return User.query.filter_by(id=get_id).first()
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 
 class WateringEvent(db.Model):
@@ -37,29 +56,27 @@ class WateringEvent(db.Model):
         return '<WateringEvent {0}: {1} seconds at {2}>'.format(self.id, self.watering_length, self.timestamp)
 
 
-# TODO: Finish device model
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'))
-    device_name = db.Column(db.String(64))
+    owner = db.Column(db.Integer)
+    device_name = db.Column(db.String(64), index=True)
     key = db.Column(db.Integer)
+    users = db.relationship('User', secondary='user_device', back_populates='devices')
 
     def __repr__(self):
         return '<Device \"{}\": {}. Key: {}. Owner: {}>'.format(self.device_name, self.id, self.key, self.owner)
 
-    def set_owner(self, owner_id):
-        self.owner = owner_id
+    def get_device(self, get_id):
+        return Device.query.filter_by(id=get_id).first()
+
 
 # Creating the association model between users, devices, and users who are owners
 class UserDevice(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     device_id = db.Column(db.Integer, db.ForeignKey(Device.id), primary_key=True)
-    owner = db.Column(db.Boolean, default=(Device.owner == User.id))
-    user = db.relationship('User', backref=db.backref('user_device', passive_deletes='all'))
-    device = db.relationship('Device', backref=db.backref('user_device', passive_deletes='all'))
 
     def __repr__(self):
-        return 'User {} has access to device {}. Owner: {}'.format(self.user_id, self.device_id, self.owner)
+        return 'User {} has access to device {}.'.format(self.user_id, self.device_id)
 
 @login.user_loader
 def load_user(id):

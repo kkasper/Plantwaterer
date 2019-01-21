@@ -1,10 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Device [{{device.id}}]: "{{ device.device_name }}"</h1>
+    <hr>
+    <form action="" method="post">
+        {{ form1.hidden_tag() }}
+        <p>
+            {{ form1.device_key.label }}<br>
+            {{ form1.device_key(size=16) }}<br>
+            {% for error in form1.device_key.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form1.device_key2.label }}<br>
+            {{ form1.device_key2(size=16) }}<br>
+            {% for error in form1.device_key2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form1.EditKeySubmit() }}</p>
+    </form>
+    <form action="" method="post">
+        {{ form2.hidden_tag() }}
+        <p>
+            {{ form2.device_name.label }}<br>
+            {{ form2.device_name(size=16) }}<br>
+            {% for error in form2.device_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form2.EditNameSubmit() }}</p>
+    </form>
+    <form action="" method="post">
+        {{ form3.hidden_tag() }}
+        <p>Remove device from account: {{ form3.delete }} <p>
+        <p>{{ form3.removeDeviceSubmit() }}</p>
+    </form>
+
+    <p><a href="{{ url_for('profile') }}">Back</a></p>
+{% endblock %}

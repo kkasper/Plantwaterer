@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from WateringSite.models import User, Device
-from flask import flash
+from flask_login import current_user
 
 
 # The fields for form pages. Handles variables/validation
@@ -36,9 +36,10 @@ class RegistrationForm(FlaskForm):
 # Registering brand new (unowned) devices
 class NewDeviceForm(FlaskForm):
     new_device_id = IntegerField('Device ID:', validators=[DataRequired()])
-    device_key = IntegerField('Device Secret Passkey:', validators=[DataRequired()])
-    device_key2 = IntegerField('Device Secret Passkey (repeat):', validators=[DataRequired(), EqualTo('device_key')])
-    device_name = StringField('Device name:')
+    msg = "Device passkey must be 4 to 6 characters."
+    device_key = StringField('Device key:', validators=[DataRequired(), Length(min=4, max=6, message=msg)])
+    device_key2 = StringField('Device key (repeat):', validators=[DataRequired(), EqualTo('device_key')])
+    device_name = StringField('Device name:', validators=[DataRequired()])
     submit = SubmitField('Register unowned device')
 
     def validate_new_device_id(self, new_device_id):
@@ -61,16 +62,47 @@ class UpdateEmailForm(FlaskForm):
 
 # Adding and removing active devices from accounts
 class AddDeviceForm(FlaskForm):
-    device_id = IntegerField('Device ID:', validators=[DataRequired()])
-    device_key = IntegerField('Device key:', validators=[DataRequired()])
-    addDeviceIDSubmit = SubmitField('Add new Device')
+    device_id = IntegerField('Add new device by id:', validators=[DataRequired()])
+    device_key = StringField('Device secret passkey:', validators=[DataRequired()])
+    addDeviceIDSubmit = SubmitField('Add device')
 
-    def validate_devicekey(self, device_id):
+    def validate_device_id(self, device_id):
         device = Device.query.filter_by(id=device_id.data).first()
         if device is None:
-            raise ValidationError('Device does not exist in system. ')
+            raise ValidationError('Device does not exist in system.')
+        elif device in current_user.devices:
+            raise ValidationError('You already have access to this device.')
+
+    def validate_device_key(self, device_key):
+        device = Device.query.filter_by(id=self.device_id.data).first()
+        if device is not None and device.key != device_key.data:
+            raise ValidationError('Invalid device key.')
 
 
 class RemoveDeviceForm(FlaskForm):
-    device_id = IntegerField('Device ID:', validators=[DataRequired()])
+    delete = BooleanField('Click to confirm')
     removeDeviceSubmit = SubmitField('Remove Device from Account')
+
+
+class EditDeviceKeyForm(FlaskForm):
+    msg = "Secret passkey must be 4 to 6 characters."
+    device_key = StringField('Device passkey:', validators=[DataRequired(), Length(min=4, max=6, message=msg)])
+    device_key2 = StringField('Device passkey (repeat):', validators=[DataRequired(), EqualTo('device_key')])
+    EditKeySubmit = SubmitField('Edit passkey')
+
+
+class EditDeviceNameForm(FlaskForm):
+    device_name = StringField('Device nickname:', validators=[DataRequired()])
+    EditNameSubmit = SubmitField('Edit nickname')
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
