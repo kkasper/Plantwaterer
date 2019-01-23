@@ -2,10 +2,14 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    <center>
+    <image src="/static/images/01.svg" style="width:80px;height:80px;display: block;
+  margin: 10px auto auto;"></image>
     <h1>Register</h1>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-xs-12">
             {{ wtf.quick_form(form) }}
         </div>
     </div>
+    </center>
 {% endblock %}

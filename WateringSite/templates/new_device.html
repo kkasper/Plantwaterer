@@ -1,38 +1,13 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
+    <center>
     <h1>Register new device</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.new_device_id.label }}<br>
-            {{ form.new_device_id(size=32) }}<br>
-            {% for error in form.new_device_id.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.device_key.label }}<br>
-            {{ form.device_key(size=16) }}<br>
-            {% for error in form.device_key.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.device_key2.label }}<br>
-            {{ form.device_key2(size=16) }}<br>
-            {% for error in form.device_key2.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.device_name.label }}<br>
-            {{ form.device_name(size=16) }}<br>
-            {% for error in form.device_name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-
-        <p>{{ form.submit() }}</p>
-    </form>
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-xs-12">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    </center>
 {% endblock %}

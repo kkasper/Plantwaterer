@@ -7,6 +7,7 @@ from time import time
 import jwt
 from WateringSite import app
 
+
 # Creating the user table
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,15 +57,16 @@ class WateringEvent(db.Model):
         return '<WateringEvent {0}: {1} seconds at {2}>'.format(self.id, self.watering_length, self.timestamp)
 
 
+# TODO: Change column type of key from Integer to String (or just dump and restart db)
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     owner = db.Column(db.Integer)
     device_name = db.Column(db.String(64), index=True)
-    key = db.Column(db.Integer)
+    key = db.Column(db.String)
     users = db.relationship('User', secondary='user_device', back_populates='devices')
 
     def __repr__(self):
-        return '<Device \"{}\": {}. Key: {}. Owner: {}>'.format(self.device_name, self.id, self.key, self.owner)
+        return '<Device [{}]:. \"{}\" Key: {}. Owner: {}>'.format(self.id, self.device_name, self.key, self.owner)
 
     def get_device(self, get_id):
         return Device.query.filter_by(id=get_id).first()
@@ -77,6 +79,7 @@ class UserDevice(db.Model):
 
     def __repr__(self):
         return 'User {} has access to device {}.'.format(self.user_id, self.device_id)
+
 
 @login.user_loader
 def load_user(id):

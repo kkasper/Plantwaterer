@@ -8,6 +8,8 @@ import logging
 from logging.handlers import RotatingFileHandler, SMTPHandler
 import os
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from sassutils.wsgi import SassMiddleware
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -17,6 +19,10 @@ login = LoginManager(app)
 login.login_view = 'login'
 mail = Mail(app)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
+app.wsgi_app = SassMiddleware(app.wsgi_app, {
+    'WateringSite': ('static/sass', 'static/css', '/static/css')
+})
 
 if not app.debug:
     # ...

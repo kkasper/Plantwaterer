@@ -10,16 +10,10 @@ from WateringSite.email import send_password_reset_email
 
 @app.route('/')
 @app.route('/home')
+@login_required
 def home():
-    wateringevents = [
-        {
-            'author': {'username': 'John'},
-        },
-        {
-            'author': {'username': 'Susan'},
-        }
-    ]
-    return render_template('index.html', title='Home', wateringevents=wateringevents)
+    devices = current_user.devices
+    return render_template('index.html', title='Home', devices=devices)
 
 
 # Allows for POST as well as GET. Checks for valid login and hashed passwords. Checks if URL has next page
@@ -44,7 +38,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 # Register a new user account

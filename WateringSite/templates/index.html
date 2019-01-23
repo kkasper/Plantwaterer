@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Hannah's Plant Party</h1>
-    {% for WateringEvent in wateringevents %}
-    <div><p>{{ WateringEvent.author.username }} watered the plants at: <b>{{ WateringEvent.timestamp }}</b></p></div>
-    {% endfor %}
+    {% if devices.__len__() < 0 %}
+        <div><p>No devices were found to be attached to this account. :(</p></o></div>
+    {% else %}
+        {% for Device in devices %}
+        <div><p>[{{ Device.device_id }}]  <b>{{ Device.device_name }}</b></p></div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

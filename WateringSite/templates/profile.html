@@ -1,31 +1,18 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
     <h1>Hi, {{ current_user.username }}!</h1>
-    <br>
-    <h1>Update your email</h1>
-    <form action="" method="post">
-        {{ form1.hidden_tag() }}
-        <p>
-            {{ form1.email.label }}<br>
-            {{ form1.email(size=64) }}<br>
-            {% for error in form1.email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form1.email2.label }}<br>
-            {{ form1.email2(size=64) }}<br>
-            {% for error in form1.email2.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+    <h2>Update your email</h2>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form1) }}
+        </div>
+    </div>
 
-        <p>{{ form1.updateEmailSubmit() }}</p>
-    </form>
-
-
-    <h1>Manage Devices</h1>
+    <div style="padding-top: 20px; margin-bottom: 40px">
+    <h2>Manage Devices</h2>
+        {% if devices.__len__() > 0 %}
         <table style="width:50%">
             <tr>
                 <th>Device ID</th>
@@ -36,32 +23,22 @@
             {% for device in devices %}
             <tr>
 
-                    <th>{{ device.id }}</th>
-                    <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
-                    <th>{{ device.key }}</th>
-                    <th>{{ User.get_by_id(device.owner).email }}</th>
+                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.id }}</a></th>
+                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
+                <th>{{ device.key }}</th>
+                <th>{{ User.get_by_id(device.owner).email }}</th>
 
             </tr>
             {% endfor %}
         </table>
-
-    <form action="" method="post">
-        {{ form2.hidden_tag() }}
-        <p>
-            {{ form2.device_id.label }}<br>
-            {{ form2.device_id(size=16) }}<br>
-            {% for error in form2.device_id.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form2.device_key.label }}<br>
-            {{ form2.device_key(size=16) }}<br>
-            {% for error in form2.device_key.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-
-        <p>{{ form2.addDeviceIDSubmit() }}</p>
-    </form>
+        <br>
+        {% endif %}
+        <br>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form2) }}
+        </div>
+        <br><br>
+    </div>
+    </div>
 {% endblock %}
