@@ -71,3 +71,4 @@ AttributeError: 'RemoveDevicesForm' object has no attribute 'removeDeviceSubmit'
 2019-01-22 11:59:44,597 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:34]
 2019-01-22 11:59:54,286 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:34]
 2019-01-22 17:08:31,006 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:36]
+2019-01-23 22:33:44,495 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]

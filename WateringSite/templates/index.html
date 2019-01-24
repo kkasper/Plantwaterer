@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    {% if devices.__len__() < 0 %}
-        <div><p>No devices were found to be attached to this account. :(</p></o></div>
+    {% if devices.__len__() < 1 %}
+    <div class="row">
+        <span class="col-md-2 col-centered text-center text-unselectable">
+            <p>No devices were found to be attached to this account. :(</p>
+        </span>
+    </div>
     {% else %}
         {% for Device in devices %}
-        <div><p>[{{ Device.device_id }}]  <b>{{ Device.device_name }}</b></p></div>
+        <div class="row">
+            <span class="col-md-2 col-centered text-unselectable">
+                <p>{{ "[{:03d}]".format( Device.id ) }} <b>{{ Device.device_name }}</p>
+            </span>
+        </div>
         {% endfor %}
     {% endif %}
 {% endblock %}
+
+[

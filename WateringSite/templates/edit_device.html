@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Device [{{device.id}}]: "{{ device.device_name }}"</h1>
+    <h1>Device {{ "[{:03d}]".format( device.id ) }}: "{{ device.device_name }}"</h1>
     <hr>
 
     <div class="row">

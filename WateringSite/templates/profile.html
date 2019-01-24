@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <h1 class ="text-unselectable">Hi, {{ current_user.username }}!</h1>
     <h2>Update your email</h2>
     <div class="row">
         <div class="col-md-4">
@@ -23,7 +23,7 @@
             {% for device in devices %}
             <tr>
 
-                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.id }}</a></th>
+                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ "[{:03d}]".format( device.id ) }}</a></th>
                 <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
                 <th>{{ device.key }}</th>
                 <th>{{ User.get_by_id(device.owner).email }}</th>
