@@ -1,0 +1,29 @@
+
+.flatpickr-calendar{
+
+    .flatpickr-month, .flatpickr-weekdays, .flatpickr-weekday{
+        background: #17A589;
+        color: #FFFFFF;
+    }
+
+    .flatpickr-day.selected{
+        background: #20B2AA;
+        border-color: #30a9a2;
+    }
+
+    .event {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 150px;
+        bottom: 3px;
+        left: calc(50% - 2.5px);
+        content: " ";
+        display: block;
+        background: #3d8eb9;
+    }
+
+    .event.busy {
+        background: #f64747;
+    }
+}

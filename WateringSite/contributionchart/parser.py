@@ -54,7 +54,7 @@ def _parse_line(original_line):
         logging.warning("Invalid line:{}".format(original_line))
         raise
 
-    return (date, count)
+    return date, count
 
 
 def parse_file(filepath):
@@ -78,7 +78,7 @@ def parse_events(watering_events):
     Parse the watering events of a singular device. Returns a dict of
     date/count pairs to fit in to existing code.
     """
-    contributions = defaultdict(int)
+    contributions = defaultdict(lambda: 0)
 
     for WateringEvent in watering_events:
         date = WateringEvent.get_fdate()

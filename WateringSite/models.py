@@ -1,11 +1,11 @@
 from WateringSite import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask import current_app
 from flask_login import UserMixin
 from WateringSite import login
 from time import time
 import jwt
-from WateringSite import app
 
 
 # Creating the user table
@@ -15,11 +15,14 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     admin = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
-    watering_events = db.relationship('WateringEvent', backref='author', lazy='dynamic')
+    watering_events = db.relationship('WateringEvent', backref="author", lazy='dynamic')
     devices = db.relationship('Device', secondary='user_device', back_populates="users")
 
     def __repr__(self):
         return '<User {} {} [{}]>'.format(self.id, self.username, self.email)
+
+    def set_admin(self, admin_status):
+        self.admin = admin_status
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -33,12 +36,12 @@ class User(UserMixin, db.Model):
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
         except:
             return
@@ -49,20 +52,28 @@ class WateringEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     watering_length = db.Column(db.Integer, default=8)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     completed = db.Column(db.Boolean, default=False)
-    scheduled_device = db.Column(db.Integer)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
 
     def __repr__(self):
         return '<WateringEvent {0}: {1} seconds at {2}>'.format(self.id, self.watering_length, self.timestamp)
 
+    def get_fdate(self):
+        d = self.timestamp
+        return '{}-{:02d}-{:02d}'.format(d.year, d.month, d.day)
 
-# TODO: Change column type of key from Integer to String (or just dump and restart db)
+    def get_datetime(self):
+        d = self.timestamp
+        return '{}-{:02d}-{:02d} {:02d}:{:02d}'.format(d.year, d.month, d.day, d.hour, d.minute)
+
+
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     owner = db.Column(db.Integer)
     device_name = db.Column(db.String(64), index=True)
     key = db.Column(db.String)
+    watering_events = db.relationship('WateringEvent', backref='device', lazy='dynamic')
     users = db.relationship('User', secondary='user_device', back_populates='devices')
 
     def __repr__(self):
@@ -70,6 +81,12 @@ class Device(db.Model):
 
     def get_device(self, get_id):
         return Device.query.filter_by(id=get_id).first()
+
+    def get_event_dates(self):
+        listofdates = []
+        for w in self.watering_events:
+            listofdates.append(w.get_datetime())
+        return listofdates
 
 
 # Creating the association model between users, devices, and users who are owners

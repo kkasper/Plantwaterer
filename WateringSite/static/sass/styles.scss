@@ -1,4 +1,24 @@
+.footer {
+  position: absolute;
+  left:0; right:0; bottom: 0;
+  height: 20px;
+}
+
+.watercontrol {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: #ddd;
+    padding-top:15px;
+    margin-bottom: 10px;
+}
+
 body {
+    min-height: 100vh;
+    position: relative;
+    margin: 0;
+    padding-bottom: 20px;
+
     .col-centered {
     float: none;
     margin: auto auto;

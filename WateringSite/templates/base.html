@@ -1,20 +1,29 @@
 {% extends 'bootstrap/base.html' %}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
+
+<link rel="mask-icon" href="{{ url_for('static', filename='favicon/safari-pinned-tab.svg') }}" color="#5bbad5">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+<meta name="msapplication-TileColor" content="#00aba9">
+<meta name="msapplication-config" content="{{ url_for('static', filename='favicon/browserconfig.xml') }}">
+<meta name="theme-color" content="#ffffff">
 
 {% block styles %}
 {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='css/styles.css')}}">
-<link href="{{ url_for('static', filename='css/confetti.scss.css') }}"
-      rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
-     <script src={{ url_for('static',filename='js/confetti.js') }}></script>
+    <script src="{{ url_for('static',filename='js/confetti.js') }}"></script>
 {% endblock %}
 
 {% block title %}
-    {% if title %}Plant Party - {{ title }}{% else %}Welcome to the Party!{% endif %}
+    {% if title %}Plant Party - {{ title }}{% else %}Hannah's Plant Party!{% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -28,32 +37,33 @@
                     <span class="icon-bar"></span>
                 </button>
                 {% if current_user.is_anonymous %}
-                <a class="navbar-brand" href="{{ url_for('login') }}">
-                    <image src="/static/images/plant01.svg" class = "navimage"></image>
-                    Plant Party
-                 </a>
+                <a class="navbar-brand" href="{{ url_for('auth.login') }}">
                 {% else %}
-                <a class="navbar-brand" href="{{ url_for('home') }}">
-                    <image src="/static/images/plant01.svg" class = "navimage"></image>
-                    Plant Party
-                </a>
+                <a class="navbar-brand" href="{{ url_for('main.home') }}">
                 {% endif %}
+                <img src="/static/images/plant01.svg" class = "navimage"></img>
+                    Plant Party
+                </a></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     {% if not current_user.is_anonymous %}
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    <li><a href="{{ url_for('profile') }}">Profile</a></li>
-                    {% if devices.__len__() < 1 %}
-                    <li><a href="{{ url_for('new_device') }}">Register new device</a></li>
+                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('main.new_device') }}">Register new device</a></li>
+
+                    {% if current_user.admin %}
+                    <li><a href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
                     {% endif %}
+
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('main.site_credits') }}">Credits</a></li>
                     {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                     {% else %}
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -66,7 +76,7 @@
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
+            <div class="alert alert-info text-center" role="alert">{{ message }}</div>
             {% endfor %}
         {% endif %}
         {% endwith %}
@@ -74,7 +84,5 @@
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>
+    {% include "footer.html" %}
 {% endblock %}
-
-
-

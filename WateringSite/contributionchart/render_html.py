@@ -13,12 +13,10 @@ This module is responsible for preparing and rendering the templates.
 from collections import namedtuple
 import datetime
 from flask import render_template
-from jinja2 import environment
-
-from WateringSite import dateutils as dateutils
-import WateringSite.contributions.parser as parser
-import WateringSite.contributions.statistics as statistics
-
+from WateringSite.contributionchart import dateutils as dateutils
+from WateringSite.contributionchart import parser as parser
+from WateringSite.contributionchart import statistics as statistics
+from WateringSite.contributionchart import bp
 GridCell = namedtuple('GridCell', ['date', 'contributions'])
 
 
@@ -36,20 +34,14 @@ def create_graph(devices):
                      [key for key, val in contributions.items() if val > 0]
                  ), "current_streak": statistics.current_streak(
                 [key for key, val in contributions.items() if val > 0]
-            ), "sum": sum(contributions.values()), "last_date": (
+            ), "sum": sum(contributions.values()), "device_name": Device.device_name, "last_date": (
                     [""] + sorted([key for key, v in contributions.items() if v])
             )[-1]}
 
         graphs.append(graph)
 
+    # TODO: Is this needed?
     #env = Environment(loader=PackageLoader('WateringSite', 'templates'))
-    environment.Environment.filters['tooltip'] = tooltip_text
-
-
-# #   environment.DEFAULT_FILTERS['display_date'] = dateutils.display_date
-   # environment.DEFAULT_FILTERS['elapsed_time'] = dateutils.elapsed_time
-
-    #template = environment.get_template("index.html")
 
     weekdays = dateutils.weekday_initials()
     for idx in [0, 2, 4, 6]:
@@ -109,18 +101,19 @@ def gridify_contributions(contributions):
     return graph_entries
 
 
+@bp.app_template_filter('tooltip')
 def tooltip_text(cell):
     """
     Returns the tooltip text for a cell.
     """
     if cell.contributions == 0:
-        count = "No contributions"
+        count = "No waterings"
     elif cell.contributions == 1:
-        count = "1 contribution"
+        count = "1 watering"
     else:
-        count = "%d contributions" % cell.contributions
+        count = "%d waterings" % cell.contributions
     date_str = dateutils.display_date(cell.date)
-    return "<strong>%s</strong> on %s" % (count, date_str)
+    return "%s on %s" % (count, date_str)
 
 
 def _cell_class(values):

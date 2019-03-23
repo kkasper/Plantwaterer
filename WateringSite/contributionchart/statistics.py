@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import WateringSite.contributions.dateutils as dateutils
+from WateringSite.contributionchart import dateutils as dateutils
 
 
 def quartiles(values):

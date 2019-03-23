@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import datetime
+from WateringSite.contributionchart import bp
 
 
 def today():
@@ -19,6 +20,7 @@ def start():
     return datetime.date(today().year - 1, today().month, today().day)
 
 
+@bp.app_template_filter('display_date')
 def display_date(date):
     """
     Returns a long date string. Example output: "May 24, 2015".
@@ -40,6 +42,7 @@ def next_day(date):
     return date + datetime.timedelta(1)
 
 
+@bp.app_template_filter('elapsed_time')
 def elapsed_time(date):
     """
     Given a date in the past, return a human-readable string explaining how

@@ -11,8 +11,9 @@
     </div>
 
     <div style="padding-top: 20px; margin-bottom: 40px">
+    {% if devices.__len__() > 0 %}
     <h2>Manage Devices</h2>
-        {% if devices.__len__() > 0 %}
+
         <table style="width:50%">
             <tr>
                 <th>Device ID</th>
@@ -23,8 +24,8 @@
             {% for device in devices %}
             <tr>
 
-                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ "[{:03d}]".format( device.id ) }}</a></th>
-                <th><a href ="{{ url_for('edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
+                <th><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ "[{:03d}]".format( device.id ) }}</a></th>
+                <th><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
                 <th>{{ device.key }}</th>
                 <th>{{ User.get_by_id(device.owner).email }}</th>
 
@@ -41,4 +42,6 @@
         <br><br>
     </div>
     </div>
+
+
 {% endblock %}
