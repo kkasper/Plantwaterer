@@ -78,9 +78,13 @@ def parse_events(watering_events):
     Parse the watering events of a singular device. Returns a dict of
     date/count pairs to fit in to existing code.
     """
-    contributions = defaultdict(lambda: 0)
+    contributions = defaultdict(int)
 
     for WateringEvent in watering_events:
-        date = WateringEvent.get_fdate()
+        try:
+            date = datetime.datetime.strptime(WateringEvent.get_fdate(), "%Y-%m-%d").date()
+        except ValueError:
+            logging.warning("Invalid date:{}".format(WateringEvent.get_fdate()))
+            raise
         contributions[date] += 1
     return contributions

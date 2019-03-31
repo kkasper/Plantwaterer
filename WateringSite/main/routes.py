@@ -1,10 +1,11 @@
 import os
+from datetime import datetime
 from WateringSite import db
-from flask import render_template, flash, redirect, url_for, send_from_directory, current_app
+from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request
 from flask_login import login_required
 from WateringSite.main.forms import *
-from WateringSite.models import Device
-from WateringSite.contributionchart import render_html as render
+from WateringSite.models import Device, WateringEvent
+from WateringSite.contributionchart import render_html
 from WateringSite.main import bp
 
 
@@ -14,15 +15,34 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-@bp.route('/')
-@bp.route('/home')
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Schedule':
+            date_time = datetime.fromtimestamp(int(request.form['scheduled_date']))
+            device_id = request.form['device_id']
+            wevent = WateringEvent(timestamp=date_time, author_id=current_user.id, device_id=device_id)
+            db.session.add(wevent)
+            db.session.commit()
+            return redirect(url_for('main.home'))
+        elif request.form['submit_button'] == 'Water Now':
+            device_id = request.form['device_id']
+            date_time = datetime.now()
+            wevent = WateringEvent(timestamp=date_time, author_id=current_user.id, device_id=device_id)
+            db.session.add(wevent)
+            db.session.commit()
+            return redirect(url_for('main.home'))
+        else:
+            pass
+
     devices = current_user.devices
-    if len(devices) > 0:
-        return render.create_graph(devices)
-    else:
-        return render_template('index.html')
+    eventsdict = {}
+    for device in devices:
+        eventsdict[device] = device.get_event_dates()
+
+    return render_html.create_graph(devices, eventsdict)
 
 
 # For adding and removing control of devices to account

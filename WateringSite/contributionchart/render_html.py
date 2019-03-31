@@ -20,7 +20,7 @@ from WateringSite.contributionchart import bp
 GridCell = namedtuple('GridCell', ['date', 'contributions'])
 
 
-def create_graph(devices):
+def create_graph(devices, eventsdict):
     """
     Prepare the `index.html` template.
     """
@@ -57,7 +57,7 @@ def create_graph(devices):
                            today=dateutils.today(),
                            start=dateutils.start(),
                            weekdays=weekdays,
-                           months=months)
+                           months=months, events=eventsdict)
 
 
 def gridify_contributions(contributions):
