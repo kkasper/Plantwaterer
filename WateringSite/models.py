@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
     def get_by_id(self, get_id):
         return User.query.filter_by(id=get_id).first()
 
-    def get_reset_password_token(self, expires_in=600):
+    def get_reset_password_token(self, expires_in=3600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')

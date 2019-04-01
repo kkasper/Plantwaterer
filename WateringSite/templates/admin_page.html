@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    $(document).on("click", ".open-deleteDeviceDialog", function () {
+     var delDeviceID = $(this).data('id');
+     $(".modal-body #device_id").val( delDeviceID );
+    });
+
+    $(document).on("click", ".open-deleteAccountDialog", function () {
+     var delUserID = $(this).data('id');
+     $(".modal-body #user_id").val( delUserID );
+    });
+
+    $(document).on("click", ".adminstatus", function () {
+     document.getElementById('adminstatusform').submit()
+    });
+
+    $(document).on("click", ".password", function () {
+     document.getElementById('passwordform').submit()
+    });
+    </script>
+{% endblock %}
+
+{% block app_content %}
+    <div class="container">
+        <p class="text-unselectable">Devices</p>
+        <table style="width:100%" class="admin">
+            <tr>
+                <th>Device ID</th>
+                <th>Device name</th>
+                <th>Owner username</th>
+                <th>Device owner ID</th>
+                <th>Device secret key</th>
+                <th>Delete Device</th>
+            </tr>
+            {% for Device in devices %}
+                {%- set device_owner_name = User.query.filter_by(id=Device.owner).first().username -%}
+                <tr>
+                    <td>{{Device.id}}</td>
+                    <td>{{Device.device_name}}</td>
+                    <td>{{device_owner_name}}</td>
+                    <td>{{Device.owner}}</td>
+                    <td>{{Device.key}}</td>
+                    <td>
+                        <button type="button" data-toggle="modal" data-target="#DeviceDeletionModal" data-id="{{Device.id}}" class = "close open-deleteDeviceDialog" style="float:none;"><span aria-hidden="true">&times;</span></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <hr>
+    <br>
+    <div class="container">
+        <p class="text-unselectable">Users</p>
+        <table style="width:100%" class="admin">
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>User email</th>
+                <th>Reset user password</th>
+                <th>Admin status</th>
+                <th>Delete User</th>
+            </tr>
+            {% for User in users %}
+                <tr>
+                    <td>{{User.id}}</td>
+                    <td>{{User.username}}</td>
+                    <td>{{User.email}}</td>
+                    <td>
+                        <form id = "passwordform" method="post" action="{{ url_for('main.admin_panel') }}">
+                            <input class="form hidden" name = "user_id_to_reset" value="{{User.id}}"/>
+                            <btn class = "btn btn-primary password" name="adminstatus" href="#">Reset</btn>
+                        </form>
+                    </td>
+                    <td>
+                        <form id = "adminstatusform" method="post" action="{{ url_for('main.admin_panel') }}">
+                            <input class="form hidden" name = "admin_status" value="{{User.admin}}"/>
+                            <a class = "adminstatus" name="adminstatus" href="#">{{User.admin}}</a>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" data-id="{{User.id}}" data-toggle="modal" data-target="#AccountDeletionModal" class = "close open-deleteAccountDialog" style="float:none;" value="user"><span aria-hidden="true">&times;</span></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <hr>
+    <br>
+
+
+
+    <!-- Modals !-->
+
+    <!-- Confirm Device Deletion Modal -->
+    <div class="modal fade" id="DeviceDeletionModal" tabindex="-1" role="dialog" aria-labelledby="Device Deletion Confirmation Modal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="DeviceDeletionModalTitle">Are you sure you want to delete this device?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('main.admin_panel') }}">
+                <input class="form hidden" name = "device_id" id="device_id"/>
+                <button type="submit" name="delete_button" class = "btn btn-danger form" value="device"><span aria-hidden="true">Confirm Deletion</span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm User Account Deletion Modal -->
+    <div class="modal fade" id="AccountDeletionModal" tabindex="-1" role="dialog" aria-labelledby="Account Deletion Confirmation Modal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="AccountDeletionModalTitle">Are you sure you want to delete this account?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('main.admin_panel') }}">
+                <input class="form hidden" name = "user_id" id="user_id"/>
+                <button type="submit" style="text-align:center;" name="delete_button" class = "btn btn-danger form" value="user"><span aria-hidden="true">Confirm Deletion</span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

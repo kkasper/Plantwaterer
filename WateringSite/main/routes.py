@@ -4,10 +4,10 @@ from WateringSite import db
 from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request
 from flask_login import login_required
 from WateringSite.main.forms import *
-from WateringSite.models import Device, WateringEvent
+from WateringSite.models import Device, WateringEvent, User
 from WateringSite.contributionchart import render_html
 from WateringSite.main import bp
-
+from WateringSite.auth.email import send_admin_password_reset_email
 
 @bp.route('/favicon.ico')
 def favicon():
@@ -20,14 +20,14 @@ def favicon():
 @login_required
 def home():
     if request.method == 'POST':
-        if request.form['submit_button'] == 'Schedule':
+        if request.form.get('submit_button') == 'Schedule' and request.form.get('scheduled_date'):
             date_time = datetime.fromtimestamp(int(request.form['scheduled_date']))
             device_id = request.form['device_id']
             wevent = WateringEvent(timestamp=date_time, author_id=current_user.id, device_id=device_id)
             db.session.add(wevent)
             db.session.commit()
             return redirect(url_for('main.home'))
-        elif request.form['submit_button'] == 'Water Now':
+        elif request.form.get('submit_button') == 'Water Now':
             device_id = request.form['device_id']
             date_time = datetime.now()
             wevent = WateringEvent(timestamp=date_time, author_id=current_user.id, device_id=device_id)
@@ -55,7 +55,7 @@ def profile():
             current_user.email = form1.email.data
             db.session.commit()
             flash('Email updated!')
-            return redirect(url_for('main.home'))
+            return redirect(url_for('main.profile'))
     if form2.addDeviceIDSubmit.data and form2.validate():
         dev = Device.query.filter_by(id=form2.device_id.data).first()
         current_user.devices.append(dev)
@@ -116,11 +116,45 @@ def edit_device(device_id):
 
 
 # TODO: Admin panel with tables for users, devices, watering events
-@bp.route('/admin_panel')
+@bp.route('/admin_panel', methods=['GET', 'POST'])
 @login_required
 def admin_panel():
-    devices = current_user.devices
-    return render_template('index.html', title='Home', devices=devices)
+    devices = Device.query.all()
+    users = User.query.all()
+    if request.method == 'POST':
+        if request.form.get('user_id_to_reset'):
+            user_id = request.form['user_id_to_reset']
+            user = User.query.filter_by(id=user_id).first_or_404()
+            send_admin_password_reset_email(user)
+            flash('Password reset email sent to {} at {}.'.format(user.username, user.email))
+            return redirect(url_for('main.admin_panel'))
+        if request.form.get('admin_status'):
+            current_user.admin = not current_user.admin
+            db.session.commit()
+            flash('Admin status updated.')
+            return redirect(url_for('main.admin_panel'))
+        if request.form.get('delete_button') == 'device':
+            device_id = request.form['device_id']
+            device = Device.query.filter_by(id=device_id).first_or_404()
+            for event in device.watering_events:
+                db.session.delete(event)
+            db.session.delete(device)
+            db.session.commit()
+            flash('Device deleted!')
+            return redirect(url_for('main.admin_panel'))
+        elif request.form.get('delete_button') == 'user':
+            user_id = request.form['user_id']
+            user = User.query.filter_by(id=user_id).first_or_404()
+            for event in user.watering_events:
+                db.session.delete(event)
+            db.session.delete(user)
+            db.session.commit()
+            flash('User account deleted!')
+            return redirect(url_for('main.admin_panel'))
+        else:
+            pass
+
+    return render_template('admin_page.html', title='Admin Panel', devices=devices, users=users, User=current_user)
 
 
 @bp.route('/credits')

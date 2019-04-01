@@ -52,9 +52,8 @@
                     <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
                     <li><a href="{{ url_for('main.new_device') }}">Register new device</a></li>
 
-                    {% if current_user.admin %}
-                    <li><a href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
-                    {% endif %}
+
+                    <li><a href="{{ url_for('main.admin_panel') }}">Admin Panel</a></li>
 
                     {% endif %}
                 </ul>

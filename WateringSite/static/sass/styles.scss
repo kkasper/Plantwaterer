@@ -13,6 +13,23 @@
     margin-bottom: 10px;
 }
 
+table.admin {
+
+    tr:nth-child(even) {
+        background-color: #eee;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    td, th {
+        text-align: center;
+        padding: 5px;
+    }
+}
+
+
 body {
     min-height: 100vh;
     position: relative;

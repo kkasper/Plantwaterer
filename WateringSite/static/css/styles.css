@@ -13,6 +13,16 @@
   padding-top: 15px;
   margin-bottom: 10px; }
 
+table.admin tr:nth-child(even) {
+  background-color: #eee; }
+
+table.admin tr:nth-child(odd) {
+  background-color: #fff; }
+
+table.admin td, table.admin th {
+  text-align: center;
+  padding: 5px; }
+
 body {
   min-height: 100vh;
   position: relative;

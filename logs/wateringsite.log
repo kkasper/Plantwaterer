@@ -91,3 +91,4 @@ sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - c
 2019-02-08 17:07:46,320 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
 2019-02-24 22:40:09,257 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
 2019-03-05 21:40:17,503 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:42]
+2019-03-31 21:42:30,014 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:86]

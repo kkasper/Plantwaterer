@@ -25,7 +25,7 @@ def create_graph(devices, eventsdict):
     Prepare the `index.html` template.
     """
     graphs = []
-
+    contributions = {}
     for Device in devices:
         contributions = parser.parse_events(Device.watering_events)
 

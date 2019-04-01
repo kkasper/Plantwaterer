@@ -60,22 +60,6 @@
             <form method="post" action="{{ url_for('main.home') }}">
                 <input class="form form-control-sm dt" name = "scheduled_date" id = "{{ Device.id }}" placeholder = "Date/Time"/>
                 <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
-                <br>
-                <script>
-                    $(".dt").flatpickr({
-                        {
-                            onDayCreate: function(dObj, dStr, fp, dayElem){
-                                // Utilize dayElem.dateObj, which is the corresponding Date
-
-
-                                if dStr in events[{{ Device.id }}]:
-                                    dayElem.innerHTML += "<span class='event'></span>";
-                            }
-                        }
-                    });
-                </script>
-                <input type="checkbox" class="form-check-input" id="radio{{Device.id}}">
-                <label class="form-check-label" for="radio{{Device.id}}">Repeat weekly?</label>
                 <br><br>
                 <button type="submit" name="submit_button" class="form col-md-offset-5 btn btn-default" value="Schedule">Schedule</button>
             </form>
