@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from WateringSite import db
-from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request
+from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request, jsonify
 from flask_login import login_required
 from WateringSite.main.forms import *
 from WateringSite.models import Device, WateringEvent, User
@@ -20,6 +20,13 @@ def favicon():
 @login_required
 def home():
     if request.method == 'POST':
+        if request.form.get('delete_button') == 'event':
+            event_id = request.form['event_id']
+            wevent = WateringEvent.query.filter_by(id=event_id).first_or_404()
+            db.session.delete(wevent)
+            db.session.commit()
+            flash("Scheduled watering has been removed!")
+            return redirect(url_for('main.home'))
         if request.form.get('submit_button') == 'Schedule' and request.form.get('scheduled_date'):
             date_time = datetime.fromtimestamp(int(request.form['scheduled_date']))
             device_id = request.form['device_id']
@@ -51,11 +58,11 @@ def home():
 def profile():
     form1 = UpdateEmailForm()
     form2 = AddDeviceForm()
-    if form1.updateEmailSubmit.data and form1.validate():
-            current_user.email = form1.email.data
-            db.session.commit()
-            flash('Email updated!')
-            return redirect(url_for('main.profile'))
+    if form1.validate_on_submit():
+        current_user.email = form1.email.data
+        db.session.commit()
+        flash("Email updated.")
+        return redirect(url_for('main.profile'))
     if form2.addDeviceIDSubmit.data and form2.validate():
         dev = Device.query.filter_by(id=form2.device_id.data).first()
         current_user.devices.append(dev)

@@ -35,11 +35,70 @@
         <link rel="stylesheet" href="{{url_for('static', filename='css/contributionchartstyle.css')}}">
         <div class="row h-50">
             <div class="col col-centered">
+                <!-- Watering Event Graph !-->
                 <p class="text-unselectable">{{ "[{:03d}]".format( Device.id ) }} <b>{{ Device.device_name }}</b></p>
                 <div class="container">
                     {%- set graph = graphs[devices.index(Device)] %}
                     {% include "contributionchart/graph.html" -%}
                 </div>
+                <div class="row" style="margin-bottom:10px;">
+
+                <div class="col-md-12 col-md-offset-5">
+                        <button type="button" data-target="#controller_{{Device.id}}" id="button_{{ Device.id }}" class="btn btn-info" data-toggle="collapse">
+                            Watering Controls
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Watering Controls !-->
+                <div class = "container watercontrol collapse" id = "controller_{{Device.id}}">
+                    <div class="row">
+                        <div class="col-6 col-xs-6 form-group">
+                            <form method="post" action="{{ url_for('main.home') }}">
+                                <input class="form form-control-sm dt" name = "scheduled_date" id = "{{ Device.id }}" placeholder = "Date/Time"/>
+                                <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
+                                <br><br>
+                                <button type="submit" name="submit_button" class="form col-md-offset-5 btn btn-default" value="Schedule">Schedule</button>
+                            </form>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-6 col-xs-6 form-group text-center">
+                                <form method="post" action="{{ url_for('main.home') }}">
+                                    <br><br>
+                                    <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
+                                    <button type="submit" name="submit_button" class="btn btn-lg btn-default" style="width: 200px;" value="Water Now">Water Now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Watering Event List !-->
+                    {% if Device.watering_events.count() > 0 %}
+                    <br>
+                    <table style="width:100%" class="wEventTable">
+                        <tr>
+                            <th>Watering date</th>
+                            <th>Scheduled time</th>
+                            <th>Delete scheduled watering</th>
+                        </tr>
+                        {% for event in Device.watering_events.order_by("timestamp") %}
+                            {% if not event.completed %}
+                                <tr>
+                                    <td>{{ event.timestamp.strftime("%a, %d. %B ") }}</td>
+                                    <td>{{ event.timestamp.strftime("%I:%M %p") }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('main.home') }}">
+                                            <input class="form hidden" name = "event_id" value="{{ event.id }}"/>
+                                            <button type="submit" name="delete_button" class = "close form" style="float:none;" value="event"><span aria-hidden="true">&times;</span></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                    <br>
+                    {% endif %}
+                 </div>
 
             </div>
         </div>

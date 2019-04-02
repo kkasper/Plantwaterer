@@ -23,6 +23,15 @@ table.admin td, table.admin th {
   text-align: center;
   padding: 5px; }
 
+table.wEventTable tr:nth-child(even) {
+  background-color: #EBF5FB; }
+
+table.wEventTable tr:nth-child(odd) {
+  background-color: #fff; }
+
+table.wEventTable td, table.wEventTable th {
+  text-align: center; }
+
 body {
   min-height: 100vh;
   position: relative;

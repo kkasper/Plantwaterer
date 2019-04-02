@@ -29,6 +29,20 @@ table.admin {
     }
 }
 
+table.wEventTable {
+
+    tr:nth-child(even) {
+        background-color: #EBF5FB;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    td, th {
+        text-align: center;
+    }
+}
 
 body {
     min-height: 100vh;

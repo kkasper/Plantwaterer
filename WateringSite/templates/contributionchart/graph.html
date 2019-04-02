@@ -46,34 +46,3 @@
       </div>
     </div>
 
-<div class="row" style="margin-bottom:10px;">
-    <div class="col-md-12 col-md-offset-5">
-        <button type="button" data-target="#controller_{{Device.id}}" id="button_{{ Device.id }}" class="btn btn-info" data-toggle="collapse">
-            Watering Controls
-        </button>
-    </div>
-</div>
-
-<div class = "container watercontrol collapse" id = "controller_{{Device.id}}">
-    <div class="row">
-        <div class="col-6 col-xs-6 form-group">
-            <form method="post" action="{{ url_for('main.home') }}">
-                <input class="form form-control-sm dt" name = "scheduled_date" id = "{{ Device.id }}" placeholder = "Date/Time"/>
-                <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
-                <br><br>
-                <button type="submit" name="submit_button" class="form col-md-offset-5 btn btn-default" value="Schedule">Schedule</button>
-            </form>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-6 col-xs-6 form-group text-center">
-                <form method="post" action="{{ url_for('main.home') }}">
-                    <br><br>
-                    <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
-                    <button type="submit" name="submit_button" class="btn btn-lg btn-default" style="width: 200px;" value="Water Now">Water Now</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-</div>

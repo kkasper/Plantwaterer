@@ -24,7 +24,7 @@ class NewDeviceForm(FlaskForm):
 # For profile page. Update your email or add a new device.
 class UpdateEmailForm(FlaskForm):
     email = StringField('Email', validators=[Email()])
-    email2 = StringField('Repeat new email', validators=[Email(), EqualTo('email')])
+    email2 = StringField('Repeat new email', validators=[Email(), EqualTo('email', message="Email fields do not match.")])
     updateEmailSubmit = SubmitField('Update Email')
 
     def validate_email(self, email):
@@ -62,7 +62,7 @@ class RemoveDeviceForm(FlaskForm):
 class EditDeviceKeyForm(FlaskForm):
     msg = "Secret passkey must be 4 to 6 characters."
     device_key = StringField('Edit device passkey:', validators=[DataRequired(), Length(min=4, max=6, message=msg)])
-    device_key2 = StringField('(repeat):', validators=[DataRequired(), EqualTo('device_key')])
+    device_key2 = StringField('(repeat):', validators=[DataRequired(), EqualTo('device_key', message="Both fields must match.")])
     EditKeySubmit = SubmitField('Submit')
 
 
