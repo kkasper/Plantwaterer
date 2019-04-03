@@ -13,9 +13,9 @@ This module is responsible for preparing and rendering the templates.
 from collections import namedtuple
 import datetime
 from flask import render_template
-from WateringSite.contributionchart import dateutils as dateutils
-from WateringSite.contributionchart import parser as parser
-from WateringSite.contributionchart import statistics as statistics
+from WateringSite.contributionchart import dateutils
+from WateringSite.contributionchart import parser
+from WateringSite.contributionchart import statistics
 from WateringSite.contributionchart import bp
 GridCell = namedtuple('GridCell', ['date', 'contributions'])
 
@@ -40,7 +40,6 @@ def create_graph(devices, eventsdict):
 
         graphs.append(graph)
 
-    # TODO: Is this needed?
     #env = Environment(loader=PackageLoader('WateringSite', 'templates'))
 
     weekdays = dateutils.weekday_initials()
@@ -83,6 +82,7 @@ def gridify_contributions(contributions):
         next_date += datetime.timedelta(7)
         first_row_dates.append(next_date)
 
+    # TODO: Rewrite gridify contributions to account for zero devices
     # Now get contribution counts for each of these dates, and save the row
     first_row = [
         GridCell(date, contributions[date]) for date in first_row_dates

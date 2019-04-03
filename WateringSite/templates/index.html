@@ -21,6 +21,50 @@
     });
     $(".flatpickr-calendar").addClass("showTimeInput");
     </script>
+
+    <script>
+    var dates = JSON.parse('{{ events | tojson | safe}}');
+    var i, key;
+    var numOfDevices = Object.keys(dates).length;
+    for (i = 0; i < numOfDevices; i++) {
+        for (key in dates[i]) {
+            var d = new Date( key ).toUTCString().substring(0, 16);
+            dates[i][d] = dates[i][key];
+            delete dates[i][key];
+        }
+    }
+
+    var dateStr, titleStr;
+    $(".scheduler").click( function(event) {
+        var index = $(this).parent().attr("id");
+        const fpList = document.querySelectorAll(".dt:not(.form-control)")
+        fpList.forEach(
+            function(picker) {
+                fp = picker._flatpickr;
+                fp.config.onDayCreate = [
+                    function (dObj, dStr, fp, dayElem) {
+                        dateStr = dayElem.dateObj.toUTCString().substring(0, 16);
+                        console.log(dateStr);
+                        if ( dates[index][dateStr] ) {
+                            dayElem.innerHTML += "<span class='event'></span>";
+                            titleStr = ""
+                            for (key in dates[index][dateStr]) {
+                                titleStr += dates[index][dateStr][key] + "<br>";
+                            }
+                            $(dayElem).tooltip({
+                                title: titleStr,
+                                placement: 'bottom',
+                                boundary: 'window',
+                                html: 'true',
+                            });
+                        }
+                    }
+                ];
+                fp.redraw();
+            }
+        );
+    });
+    </script>
 {% endblock %}
 
 {% block app_content %}
@@ -35,6 +79,7 @@
         <link rel="stylesheet" href="{{url_for('static', filename='css/contributionchartstyle.css')}}">
         <div class="row h-50">
             <div class="col col-centered">
+
                 <!-- Watering Event Graph !-->
                 <p class="text-unselectable">{{ "[{:03d}]".format( Device.id ) }} <b>{{ Device.device_name }}</b></p>
                 <div class="container">
@@ -54,11 +99,11 @@
                 <div class = "container watercontrol collapse" id = "controller_{{Device.id}}">
                     <div class="row">
                         <div class="col-6 col-xs-6 form-group">
-                            <form method="post" action="{{ url_for('main.home') }}">
-                                <input class="form form-control-sm dt" name = "scheduled_date" id = "{{ Device.id }}" placeholder = "Date/Time"/>
+                            <form method="post" action="{{ url_for('main.home') }}" id="{{ loop.index - 1 }}">
+                                <input class="form dt scheduler" name = "scheduled_date" placeholder = "Date/Time"/>
                                 <input class="form hidden" name = "device_id" value = "{{Device.id}}"/>
                                 <br><br>
-                                <button type="submit" name="submit_button" class="form col-md-offset-5 btn btn-default" value="Schedule">Schedule</button>
+                                <button type="submit" name="submit_button" id="scheduledSubmit" class="form col-md-offset-5 btn btn-default" value="Schedule">Schedule</button>
                             </form>
                         </div>
                         <div class="row align-items-center">

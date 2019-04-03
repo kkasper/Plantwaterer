@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from datetime import datetime
 from WateringSite import db
 from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request, jsonify
@@ -45,9 +46,10 @@ def home():
             pass
 
     devices = current_user.devices
-    eventsdict = {}
-    for device in devices:
-        eventsdict[device] = device.get_event_dates()
+    eventsdict = defaultdict(lambda: defaultdict(list))
+    for d in range(len(devices)):
+        for e in devices[d].watering_events.all():
+            eventsdict[d][e.get_parser_date()].append(e.get_ftime())
 
     return render_html.create_graph(devices, eventsdict)
 

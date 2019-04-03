@@ -82,7 +82,7 @@ def parse_events(watering_events):
 
     for WateringEvent in watering_events:
         try:
-            date = datetime.datetime.strptime(WateringEvent.get_fdate(), "%Y-%m-%d").date()
+            date = datetime.datetime.strptime(WateringEvent.get_parser_date(), "%Y-%m-%d").date()
         except ValueError:
             logging.warning("Invalid date:{}".format(WateringEvent.get_fdate()))
             raise

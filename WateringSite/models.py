@@ -60,6 +60,12 @@ class WateringEvent(db.Model):
         return '<WateringEvent {0}: {1} seconds at {2}>'.format(self.id, self.watering_length, self.timestamp)
 
     def get_fdate(self):
+        return self.timestamp.strftime("%a, %d. %B %Y %H:%M")
+
+    def get_ftime(self):
+        return self.timestamp.strftime("%I:%M %p")
+
+    def get_parser_date(self):
         d = self.timestamp
         return '{}-{:02d}-{:02d}'.format(d.year, d.month, d.day)
 
@@ -85,8 +91,12 @@ class Device(db.Model):
     def get_event_dates(self):
         listofdates = []
         for w in self.watering_events:
-            listofdates.append(w.get_datetime())
+            listofdates.append(w.get_fdate())
         return listofdates
+
+    def get_unique_dates(self):
+        listofdates = self.get_event_dates()
+        return list(dict.fromkeys(listofdates))
 
 
 # Creating the association model between users, devices, and users who are owners
