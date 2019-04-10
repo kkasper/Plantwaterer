@@ -4,11 +4,13 @@ from datetime import datetime
 from WateringSite import db
 from flask import render_template, flash, redirect, url_for, send_from_directory, current_app, request, jsonify
 from flask_login import login_required
+from WateringSite.email import send_guest_access_email
 from WateringSite.main.forms import *
 from WateringSite.models import Device, WateringEvent, User
 from WateringSite.contributionchart import render_html
 from WateringSite.main import bp
 from WateringSite.auth.email import send_admin_password_reset_email
+
 
 @bp.route('/favicon.ico')
 def favicon():
@@ -59,17 +61,29 @@ def home():
 @login_required
 def profile():
     form1 = UpdateEmailForm()
-    form2 = AddDeviceForm()
+    form2 = GuestAccessForm()
     if form1.validate_on_submit():
         current_user.email = form1.email.data
         db.session.commit()
         flash("Email updated.")
         return redirect(url_for('main.profile'))
-    if form2.addDeviceIDSubmit.data and form2.validate():
-        dev = Device.query.filter_by(id=form2.device_id.data).first()
-        current_user.devices.append(dev)
+    if form2.validate_on_submit():
+        device = Device.query.get(form2.device_id.data)
+        recipient = {"Name": form2.casual_name.data, "Email": form2.recipient_email.data}
+        send_guest_access_email(device, current_user, recipient)
+        flash('An invitation to access your device has been sent to {}.'.format(form2.recipient_email.data))
+        return redirect(url_for('main.profile'))
+    if request.form.get('guest_access_id'):
+        device = Device.query.get(request.form['guest_access_id'])
+        device.guests_allowed = not device.guests_allowed
         db.session.commit()
-        flash('Device added to account!')
+        flash('Guest privileges have been updated.')
+        return redirect(url_for('main.profile'))
+    if request.form.get('displaystatus_device_id'):
+        device = Device.query.get(request.form['displaystatus_device_id'])
+        device.display_open = not device.display_open
+        db.session.commit()
+        flash('Display preference updated.')
         return redirect(url_for('main.profile'))
 
     return render_template('profile.html', title='User Profile', form1=form1, form2=form2,
@@ -82,12 +96,11 @@ def profile():
 def new_device():
     form = NewDeviceForm()
     if form.validate_on_submit():
-        device = Device(id=form.new_device_id.data, key=form.device_key.data,  device_name=form.device_name.data,
-                        owner=current_user.id)
-        db.session.add(device)
+        device = Device.query.filter_by(id=form.new_device_serial.data).first()
+        device.owner = current_user.id
         current_user.devices.append(device)
         db.session.commit()
-        flash('You have registered a new device!')
+        flash('You have registered a device to your account!')
         return redirect(url_for('main.home'))
     return render_template('new_device.html', title='Register new device', form=form)
 
@@ -99,28 +112,23 @@ def edit_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
     if device not in current_user.devices:
         return redirect(url_for('main.home'))
-    form1 = EditDeviceKeyForm()
-    form2 = EditDeviceNameForm()
-    form3 = RemoveDeviceForm()
-    if form1.EditKeySubmit.data and form1.validate():
-        device.key = form1.device_key.data
-        db.session.commit()
-        flash('Passkey updated.')
-        return redirect(url_for('main.edit_device', device_id=device.id))
-    if form2.EditNameSubmit.data and form2.validate():
+    form1 = EditDeviceNameForm()
+    form2 = RemoveDeviceForm()
+    if form1.EditNameSubmit.data and form1.validate():
         if device.owner is not current_user.id:
             flash('Only the owner of the device can change the name.')
             return redirect(url_for('main.edit_device', device_id=device.id))
-        device.device_name = form2.device_name.data
+        device.name = form1.device_name.data
         db.session.commit()
         flash('Device name updated.')
         return redirect(url_for('main.edit_device', device_id=device.id))
-    if form3.removeDeviceSubmit.data and form3.validate():
+    if form2.removeDeviceSubmit.data and form2.validate():
         current_user.devices.remove(device)
+        device.owner = 0
         db.session.commit()
         flash('Device removed from account!')
         return redirect(url_for('main.profile'))
-    return render_template('edit_device.html', title='Edit Device Settings', form1=form1, form2=form2, form3=form3,
+    return render_template('edit_device.html', title='Edit Device Settings', form1=form1, form2=form2,
                            device=device)
 
 
@@ -130,6 +138,7 @@ def edit_device(device_id):
 def admin_panel():
     devices = Device.query.all()
     users = User.query.all()
+    events = WateringEvent.query.all()
     if request.method == 'POST':
         if request.form.get('user_id_to_reset'):
             user_id = request.form['user_id_to_reset']
@@ -137,8 +146,9 @@ def admin_panel():
             send_admin_password_reset_email(user)
             flash('Password reset email sent to {} at {}.'.format(user.username, user.email))
             return redirect(url_for('main.admin_panel'))
-        if request.form.get('admin_status'):
-            current_user.admin = not current_user.admin
+        if request.form.get('admin_status_user_id'):
+            user = User.query.get(request.form['admin_status_user_id'])
+            user.admin = not user.admin
             db.session.commit()
             flash('Admin status updated.')
             return redirect(url_for('main.admin_panel'))
@@ -159,14 +169,42 @@ def admin_panel():
             db.session.delete(user)
             db.session.commit()
             flash('User account deleted!')
+        elif request.form.get('delete_button') == 'event':
+            event_id = request.form['event_id']
+            event = WateringEvent.query.filter_by(id=event_id).first_or_404()
+            db.session.delete(event)
+            db.session.commit()
+            flash('Watering event deleted!')
+            return redirect(url_for('main.admin_panel'))
+        elif request.form.get('create_device'):
+            device = Device()
+            db.session.add(device)
+            db.session.commit()
+            flash('New device generated!')
             return redirect(url_for('main.admin_panel'))
         else:
             pass
 
-    return render_template('admin_page.html', title='Admin Panel', devices=devices, users=users, User=current_user)
+    return render_template('admin_page.html', title='Admin Panel', devices=devices, users=users, events=events, User=current_user)
 
 
 @bp.route('/credits')
 def site_credits():
     return render_template('credits.html', title='Credits')
 
+
+@bp.route('/grant_access/<token>', methods=['GET', 'POST'])
+@login_required
+def grant_access(token):
+    device = Device.verify_guest_access_token(token)
+    if not device:
+        return redirect(url_for('main.home'))
+
+    if device in current_user.devices:
+        flash('You already had access to this device.')
+        return redirect(url_for('main.home'))
+
+    current_user.devices.append(device)
+    db.session.commit()
+    flash('You now have access to {}.'.format(device.device_name))
+    return redirect(url_for('main.home'))

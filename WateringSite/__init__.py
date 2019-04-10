@@ -10,7 +10,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from sassutils.wsgi import SassMiddleware
 from config import Config
-
+from flask_ngrok import run_with_ngrok
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,9 +22,11 @@ bootstrap = Bootstrap()
 moment = Moment()
 
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    run_with_ngrok(app)
 
     db.init_app(app)
     migrate.init_app(app, db)

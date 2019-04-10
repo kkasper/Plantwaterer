@@ -1,4 +1,4 @@
-2019-01-26 13:04:53,049 ERROR: Exception on / [GET] [in c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py:1761]
+2019-04-09 18:08:21,330 ERROR: Exception on /profile [GET] [in c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py:1761]
 Traceback (most recent call last):
   File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 2292, in wsgi_app
     response = self.full_dispatch_request()
@@ -12,34 +12,42 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1799, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 259, in decorated_view
-    elif not current_user.is_authenticated:
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\werkzeug\local.py", line 347, in __getattr__
-    return getattr(self._get_current_object(), name)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\werkzeug\local.py", line 306, in _get_current_object
-    return self.__local()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 26, in <lambda>
-    current_user = LocalProxy(lambda: _get_user())
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 335, in _get_user
-    current_app.login_manager._load_user()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\login_manager.py", line 359, in _load_user
-    return self.reload_user()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\login_manager.py", line 321, in reload_user
-    user = self.user_callback(user_id)
-  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\models.py", line 94, in load_user
-    return User.query.get(int(id))
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_sqlalchemy\__init__.py", line 512, in __get__
-    mapper = orm.class_mapper(type)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\base.py", line 433, in class_mapper
-    mapper = _inspect_mapped_class(class_, configure=configure)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\base.py", line 412, in _inspect_mapped_class
-    mapper._configure_all()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\mapper.py", line 1323, in _configure_all
-    configure_mappers()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\mapper.py", line 3201, in configure_mappers
-    raise e
-sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper|User|user'. Original exception was: Error creating backref 'author' on relationship 'User.watering_events': property of that name exists on mapper 'Mapper|WateringEvent|watering_event'
-2019-01-26 13:04:53,537 ERROR: Exception on / [GET] [in c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py:1761]
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\main\routes.py", line 78, in profile
+    devices=current_user.devices, User=current_user)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\templating.py", line 135, in render_template
+    context, ctx.app)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\templating.py", line 117, in _render
+    rv = template.render(context)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\profile.html", line 2, in top-level template code
+    {% import 'bootstrap/wtf.html' as wtf %}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\base.html", line 1, in top-level template code
+    {% extends 'bootstrap/base.html' %}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 1, in top-level template code
+    {% block doc -%}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 4, in block "doc"
+    {%- block html %}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 20, in block "html"
+    {% block body -%}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 23, in block "body"
+    {% block content -%}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\base.html", line 84, in block "content"
+    {% block app_content %}{% endblock %}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\profile.html", line 70, in block "app_content"
+    <input class="form hidden" name = "guest_access_status" value="{{Device.guest_access}}"/>
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 430, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'Device' is undefined
+2019-04-09 18:08:24,143 ERROR: Exception on /profile [GET] [in c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py:1761]
 Traceback (most recent call last):
   File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 2292, in wsgi_app
     response = self.full_dispatch_request()
@@ -53,43 +61,38 @@ Traceback (most recent call last):
     rv = self.dispatch_request()
   File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\app.py", line 1799, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 259, in decorated_view
-    elif not current_user.is_authenticated:
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\werkzeug\local.py", line 347, in __getattr__
-    return getattr(self._get_current_object(), name)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\werkzeug\local.py", line 306, in _get_current_object
-    return self.__local()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 26, in <lambda>
-    current_user = LocalProxy(lambda: _get_user())
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 335, in _get_user
-    current_app.login_manager._load_user()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\login_manager.py", line 359, in _load_user
-    return self.reload_user()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\login_manager.py", line 321, in reload_user
-    user = self.user_callback(user_id)
-  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\models.py", line 94, in load_user
-    return User.query.get(int(id))
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_sqlalchemy\__init__.py", line 512, in __get__
-    mapper = orm.class_mapper(type)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\base.py", line 433, in class_mapper
-    mapper = _inspect_mapped_class(class_, configure=configure)
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\base.py", line 412, in _inspect_mapped_class
-    mapper._configure_all()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\mapper.py", line 1323, in _configure_all
-    configure_mappers()
-  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\sqlalchemy\orm\mapper.py", line 3201, in configure_mappers
-    raise e
-sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper|User|user'. Original exception was: Error creating backref 'author' on relationship 'User.watering_events': property of that name exists on mapper 'Mapper|WateringEvent|watering_event'
-2019-01-26 13:04:57,437 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:11:39,006 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:11:47,337 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:11:58,817 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:12:21,639 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:12:30,037 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:12:33,028 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-01-30 14:14:29,196 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-02-08 17:07:46,320 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-02-24 22:40:09,257 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:40]
-2019-03-05 21:40:17,503 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:42]
-2019-03-31 21:42:30,014 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:86]
-2019-04-01 17:09:16,138 INFO: WateringSite startup [in C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\__init__.py:86]
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_login\utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\main\routes.py", line 78, in profile
+    devices=current_user.devices, User=current_user)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\templating.py", line 135, in render_template
+    context, ctx.app)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask\templating.py", line 117, in _render
+    rv = template.render(context)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\profile.html", line 2, in top-level template code
+    {% import 'bootstrap/wtf.html' as wtf %}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\base.html", line 1, in top-level template code
+    {% extends 'bootstrap/base.html' %}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 1, in top-level template code
+    {% block doc -%}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 4, in block "doc"
+    {%- block html %}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 20, in block "html"
+    {% block body -%}
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\flask_bootstrap\templates\bootstrap\base.html", line 23, in block "body"
+    {% block content -%}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\base.html", line 84, in block "content"
+    {% block app_content %}{% endblock %}
+  File "C:\Users\KevinK\PycharmProjects\Plantwaterer\WateringSite\templates\profile.html", line 70, in block "app_content"
+    <input class="form hidden" name = "guest_access_status" value="{{Device.guest_access}}"/>
+  File "c:\users\kevink\pycharmprojects\plantwaterer\venv\lib\site-packages\jinja2\environment.py", line 430, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'Device' is undefined

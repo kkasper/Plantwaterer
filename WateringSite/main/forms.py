@@ -7,18 +7,20 @@ from flask_login import current_user
 
 # Registering brand new (unowned) devices
 class NewDeviceForm(FlaskForm):
-    new_device_id = IntegerField('Device ID:', validators=[DataRequired()])
-    msg = "Device passkey must be 4 to 6 characters."
-    device_key = StringField('Device key:', validators=[DataRequired(), Length(min=4, max=6, message=msg)])
-    device_key2 = StringField('Device key (repeat):', validators=[DataRequired(), EqualTo('device_key')])
-    msg2 = "Device must have a name."
-    device_name = StringField('Device name:', validators=[DataRequired(), Length(min=1, max=-1, message=msg2)])
+    new_device_serial = IntegerField('Device Serial Number:', validators=[DataRequired()])
+    device_uid = StringField('Device unique ID:', validators=[DataRequired()])
+    device_uid2 = StringField('Device unique ID (repeat):', validators=[DataRequired(), EqualTo('device_uid')])
     submit = SubmitField('Register unowned device')
 
-    def validate_new_device_id(self, new_device_id):
-        dev = Device.query.filter_by(id=new_device_id.data).first()
-        if dev is not None:
-            raise ValidationError('Device already exists in system.')
+    def validate_new_device_serial(self, new_device_serial):
+        device = Device.query.filter_by(id=new_device_serial.data).first()
+        if device.owner is not 0:
+            raise ValidationError('Device is already owned by someone.')
+
+    def validate_device_uid(self, device_uid):
+        device = Device.query.filter_by(id=self.new_device_serial.data).first()
+        if not device_uid.data == device.key:
+            raise ValidationError('Device information is not valid.')
 
 
 # For profile page. Update your email or add a new device.
@@ -59,15 +61,14 @@ class RemoveDeviceForm(FlaskForm):
     removeDeviceSubmit = SubmitField('Confirm Removal')
 
 
-class EditDeviceKeyForm(FlaskForm):
-    msg = "Secret passkey must be 4 to 6 characters."
-    device_key = StringField('Edit device passkey:', validators=[DataRequired(), Length(min=4, max=6, message=msg)])
-    device_key2 = StringField('(repeat):', validators=[DataRequired(), EqualTo('device_key', message="Both fields must match.")])
-    EditKeySubmit = SubmitField('Submit')
-
-
 class EditDeviceNameForm(FlaskForm):
     device_name = StringField('Edit device nickname:', validators=[DataRequired()])
     EditNameSubmit = SubmitField('Submit')
 
 
+class GuestAccessForm(FlaskForm):
+    casual_name = StringField('Recipient name (optional):')
+    recipient_email = StringField('Recipient email', validators=[Email()])
+    recipient_email2 = StringField('Repeat email', validators=[Email(), EqualTo('recipient_email', message="Email fields do not match.")])
+    device_id = IntegerField("Device Serial Number:")
+    guestInviteSubmit = SubmitField('Send invitation')

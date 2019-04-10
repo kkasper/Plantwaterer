@@ -2,26 +2,23 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Device {{ "[{:03d}]".format( device.id ) }}: "{{ device.device_name }}"</h1>
-    <hr>
+    <div class="container">
+        <h1 class="text-unselectable">Device {{ "[{:03d}]".format( device.id ) }}: "{{ device.device_name }}"</h1>
+        <hr>
 
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form1) }}
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                {{ wtf.quick_form(form1) }}
+            </div>
         </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form2) }}
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                {{ wtf.quick_form(form2) }}
+            </div>
         </div>
+        <br>
+        <p><a href="{{ url_for('main.profile') }}">Back</a></p>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form3) }}
-        </div>
-    </div>
-    <br>
-    <p><a href="{{ url_for('main.profile') }}">Back</a></p>
 {% endblock %}

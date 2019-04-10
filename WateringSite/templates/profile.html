@@ -11,6 +11,20 @@
             $('#emailModal').modal('show');
         }
     });
+    var formErrors2 = {% if form2.errors %}true{% else %}false{% endif %};
+    $(window).on('load',function(){
+        if (formErrors2) {
+            $('#accessModal').modal('show');
+        }
+    });
+    </script>
+    <script>
+    $(document).on("click", ".gueststatus", function () {
+     document.getElementById('gueststatusform').submit()
+    });
+    $(document).on("click", ".displaystatus", function () {
+     document.getElementById('defaultdisplayform').submit()
+    });
     </script>
 
 
@@ -19,14 +33,83 @@
 
 
 {% block app_content %}
+<div class = "container">
     <h1 class ="text-unselectable">Hi, {{ current_user.username }}!</h1>
-    <br>
+
     <!-- Button trigger modal -->
+    <p>Current email: {{current_user.email}}</p>
     <button type="button" class="btn btn-primary" id = "emailDialogButton" data-toggle="modal" data-target="#emailModal">
       Update Email
     </button>
 
-    <!-- Modal -->
+    <div style="padding-top: 20px; margin-bottom: 40px">
+    {% if devices.__len__() > 0 %}
+        <h1 class ="text-unselectable">Devices</h1>
+
+        <table class="admin" style="width:100%">
+            <tr>
+                <th>Device Serial</th>
+                <th>Device nickname</th>
+                <th>Device unique ID</th>
+                <th>Device owner</th>
+                <th>Device owner email</th>
+                <th>Invite guest to water</th>
+                <th>Allow guest watering?</th>
+                <th>Expand watering controls by default?</th>
+            </tr>
+            {% for device in devices %}
+            <tr>
+                <td><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ "[{:03d}]".format( device.id ) }}</a></td>
+                <td><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ device.device_name }}</a></td>
+                <td>
+                    {% if device.owner == current_user.id %}
+                        {{ device.key }}
+                    {% endif %}
+                </td>
+                <td>{{ User.query.get(device.owner).username }}</td>
+                <td>{{ User.query.get(device.owner).email }}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" id = "guestAccessButton" data-toggle="modal" data-target="#accessModal">
+                        Grant guest access
+                    </button>
+                </td>
+                <td>
+                    {% if device.owner == current_user.id %}
+                        <form id = "gueststatusform" method="post" action="{{ url_for('main.profile') }}">
+                            <input class="form hidden" name = "guest_access_id" value="{{device.id}}"/>
+                            <a href="#" class="gueststatus" value="{{device.guests_allowed}}">{{device.guests_allowed}}</a>
+                        </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if device.owner == current_user.id %}
+                        <form id = "defaultdisplayform" method="post" action="{{ url_for('main.profile') }}">
+                            <input class="hidden" name="displaystatus_device_id" value="{{device.id}}">
+                            <a href="#" class="displaystatus" value="{{device.display_open}}">{{device.display_open}}</a>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    {% else %}
+        <div class="row">
+            <span class="col-md-2 col-centered text-center text-unselectable">
+                <p>Add a device to get started!</p>
+            </span>
+        </div>
+    {% endif %}
+
+        <br>
+    </div>
+
+</div>
+
+<!-- Modals -->
+
+
+    <!-- Email Modal -->
     <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -48,37 +131,33 @@
       </div>
     </div>
 
-    <div style="padding-top: 20px; margin-bottom: 40px">
-    {% if devices.__len__() > 0 %}
-        <h1 class ="text-unselectable">Devices</h1>
-
-        <table style="width:50%">
-            <tr>
-                <th>Device ID</th>
-                <th>Device Name</th>
-                <th>Device Passkey</th>
-                <th>Device Owner</th>
-            </tr>
-            {% for device in devices %}
-            <tr>
-                <th><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ "[{:03d}]".format( device.id ) }}</a></th>
-                <th><a href ="{{ url_for('main.edit_device', device_id=device.id) }}">{{ device.device_name }}</a></th>
-                <th>{{ device.key }}</th>
-                <th>{{ User.get_by_id(device.owner).email }}</th>
-
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
-        {% endif %}
-        <br>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form2) }}
+    <!-- Guest Access Modal -->
+    <div class="modal fade" id="accessModal" tabindex="-1" role="dialog" aria-labelledby="accessModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="accessModalLabel">Invite someone to share control of this device</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="margin:15px;">
+            <div>
+                <form class="form form-horizontal" method="post" role="form">
+                    {{ form2.hidden_tag() }}
+                    {{ wtf.form_errors(form2, hiddens="only") }}
+                    {{ wtf.form_field(form2.casual_name) }}
+                    {{ wtf.form_field(form2.recipient_email) }}
+                    {{ wtf.form_field(form2.recipient_email2) }}
+                    {{ wtf.form_field(form2.device_id) }}
+                    {{ wtf.form_field(form2.guestInviteSubmit) }}
+                </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
         </div>
-        <br><br>
+      </div>
     </div>
-    </div>
-
-
 {% endblock %}

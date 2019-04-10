@@ -1,3 +1,5 @@
+import random
+import uuid
 from WateringSite import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -6,6 +8,10 @@ from flask_login import UserMixin
 from WateringSite import login
 from time import time
 import jwt
+
+defaultNames = ['Plantron', 'Audrey II', 'Pete', 'Plantacus', 'PlantBot 3000', 'Plant Watering Device', 'Plantopher',
+                'The One Who Waters', 'PlantBot 2000', 'Glorified Watering Can', 'Hydrogen Dioxide Dispenser V1',
+                'Plantron II', 'HAL 9000', 'Eve', 'WiFi Enabled Sprinkler']
 
 
 # Creating the user table
@@ -29,9 +35,6 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def get_by_id(self, get_id):
-        return User.query.filter_by(id=get_id).first()
 
     def get_reset_password_token(self, expires_in=3600):
         return jwt.encode(
@@ -76,9 +79,11 @@ class WateringEvent(db.Model):
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    owner = db.Column(db.Integer)
-    device_name = db.Column(db.String(64), index=True)
-    key = db.Column(db.String)
+    owner = db.Column(db.Integer, default=0)
+    device_name = db.Column(db.String(64), index=True, default=lambda: random.choice(defaultNames))
+    key = db.Column(db.String, default=lambda: str(uuid.uuid4())[0:6].upper())
+    guests_allowed = db.Column(db.Boolean, default=False)
+    display_open = db.Column(db.Boolean, default=False)
     watering_events = db.relationship('WateringEvent', backref='device', lazy='dynamic')
     users = db.relationship('User', secondary='user_device', back_populates='devices')
 
@@ -97,6 +102,20 @@ class Device(db.Model):
     def get_unique_dates(self):
         listofdates = self.get_event_dates()
         return list(dict.fromkeys(listofdates))
+
+    def get_guest_access_token(self, expires_in=3600):
+        return jwt.encode(
+            {'access_id': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_guest_access_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['access_id']
+        except:
+            return
+        return Device.query.get(id)
 
 
 # Creating the association model between users, devices, and users who are owners

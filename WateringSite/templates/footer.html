@@ -2,9 +2,12 @@
     <div class="row align-items-end">
         <div class="col footer col-centered text-center">
             <hr>
-            <image src="static/images/random/{{ range(0,70)|random }}.svg"  style="width:80px;height:80px;display: block;
+            {%- set rand_num = range(0,70)|random %}
+            {%- set src_url = rand_num ~ '.svg' %}
+            <image src="{{ url_for('static',filename='images/random/') ~ src_url }}"  style="width:80px;height:80px;display: block;
   margin: 10px auto auto;"></image></center>
             <br>
+
             <p>Created by Kevin Kasper<br>
             Contact the admin <a href="mailto:hplantparty@gmail.com"> here.</a><br>
             © 2019 Copyright

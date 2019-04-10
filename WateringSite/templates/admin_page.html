@@ -13,6 +13,11 @@
      $(".modal-body #user_id").val( delUserID );
     });
 
+    $(document).on("click", ".open-deleteEventDialog", function () {
+     var delEventID = $(this).data('id');
+     $(".modal-body #event_id").val( delEventID );
+    });
+
     $(document).on("click", ".adminstatus", function () {
      document.getElementById('adminstatusform').submit()
     });
@@ -33,6 +38,8 @@
                 <th>Owner username</th>
                 <th>Device owner ID</th>
                 <th>Device secret key</th>
+                <th>Guests allowed access</th>
+                <th>Default controls display</th>
                 <th>Delete Device</th>
             </tr>
             {% for Device in devices %}
@@ -43,15 +50,25 @@
                     <td>{{device_owner_name}}</td>
                     <td>{{Device.owner}}</td>
                     <td>{{Device.key}}</td>
+                    <td>{{Device.guests_allowed}}</td>
+                    <td>{{Device.display_open}}</td>
                     <td>
                         <button type="button" data-toggle="modal" data-target="#DeviceDeletionModal" data-id="{{Device.id}}" class = "close open-deleteDeviceDialog" style="float:none;"><span aria-hidden="true">&times;</span></button>
                     </td>
                 </tr>
             {% endfor %}
         </table>
+        <br>
+        <form method="post" action="{{ url_for('main.admin_panel') }}">
+            <div class="col-md-12 text-center">
+                <button type="submit" name="create_device" class="btn btn-info" value="newDevice">Generate new device</button>
+            </div>
+        </form>
     </div>
 
     <hr>
+
+    <!-- Users table -->
     <br>
     <div class="container">
         <p class="text-unselectable">Users</p>
@@ -72,13 +89,13 @@
                     <td>
                         <form id = "passwordform" method="post" action="{{ url_for('main.admin_panel') }}">
                             <input class="form hidden" name = "user_id_to_reset" value="{{User.id}}"/>
-                            <btn class = "btn btn-primary password" name="adminstatus" href="#">Reset</btn>
+                            <button class = "btn btn-primary password" name="passwordreset" href="#">Reset</button>
                         </form>
                     </td>
                     <td>
                         <form id = "adminstatusform" method="post" action="{{ url_for('main.admin_panel') }}">
-                            <input class="form hidden" name = "admin_status" value="{{User.admin}}"/>
-                            <a class = "adminstatus" name="adminstatus" href="#">{{User.admin}}</a>
+                            <input class="form hidden" name = "admin_status_user_id" value="{{User.id}}"/>
+                            <a class = "adminstatus" name="admin_status" href="#">{{User.admin}}</a>
                         </form>
                     </td>
                     <td>
@@ -91,9 +108,41 @@
     <hr>
     <br>
 
+    <!-- Watering Events Table -->
+    <br>
+    <div class="container">
+        <p class="text-unselectable">Scheduled Waterings</p>
+        <table style="width:100%" class="admin">
+            <tr>
+                <th>Author ID</th>
+                <th>Author username</th>
+                <th>Watering event ID</th>
+                <th>Watering date</th>
+                <th>Watering time</th>
+                <th>Delete Event</th>
+            </tr>
+            {% for Event in events %}
+                <tr>
+                    <td>{{Event.author.id}}</td>
+                    <td>{{Event.author.username}}</td>
+                    <td>{{Event.id}}</td>
+                    <td>
+                        {{Event.get_parser_date()}}
+                    </td>
+                    <td>
+                        {{Event.get_ftime()}}
+                    </td>
+                    <td>
+                        <button type="button" data-id="{{Event.id}}" data-toggle="modal" data-target="#EventDeletionModal" class = "close open-deleteEventDialog" style="float:none;" value="event"><span aria-hidden="true">&times;</span></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <hr>
+    <br>
 
-
-    <!-- Modals !-->
+    <!-- Modals -->
 
     <!-- Confirm Device Deletion Modal -->
     <div class="modal fade" id="DeviceDeletionModal" tabindex="-1" role="dialog" aria-labelledby="Device Deletion Confirmation Modal" aria-hidden="true">
@@ -129,6 +178,26 @@
             <form method="post" action="{{ url_for('main.admin_panel') }}">
                 <input class="form hidden" name = "user_id" id="user_id"/>
                 <button type="submit" style="text-align:center;" name="delete_button" class = "btn btn-danger form" value="user"><span aria-hidden="true">Confirm Deletion</span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Watering Event Deletion Modal -->
+    <div class="modal fade" id="EventDeletionModal" tabindex="-1" role="dialog" aria-labelledby="Event Deletion Confirmation Modal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="EventtDeletionModalTitle">Are you sure you want to delete this event?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('main.admin_panel') }}">
+                <input class="form hidden" name = "event_id" id="event_id"/>
+                <button type="submit" style="text-align:center;" name="delete_button" class = "btn btn-danger form" value="event"><span aria-hidden="true">Confirm Deletion</span></button>
             </form>
           </div>
         </div>

@@ -10,7 +10,7 @@ graph:
 This module is responsible for preparing and rendering the templates.
 """
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import datetime
 from flask import render_template
 from WateringSite.contributionchart import dateutils
@@ -25,7 +25,7 @@ def create_graph(devices, eventsdict):
     Prepare the `index.html` template.
     """
     graphs = []
-    contributions = {}
+    contributions = defaultdict(int)
     for Device in devices:
         contributions = parser.parse_events(Device.watering_events)
 
@@ -39,8 +39,6 @@ def create_graph(devices, eventsdict):
             )[-1]}
 
         graphs.append(graph)
-
-    #env = Environment(loader=PackageLoader('WateringSite', 'templates'))
 
     weekdays = dateutils.weekday_initials()
     for idx in [0, 2, 4, 6]:
@@ -82,7 +80,6 @@ def gridify_contributions(contributions):
         next_date += datetime.timedelta(7)
         first_row_dates.append(next_date)
 
-    # TODO: Rewrite gridify contributions to account for zero devices
     # Now get contribution counts for each of these dates, and save the row
     first_row = [
         GridCell(date, contributions[date]) for date in first_row_dates

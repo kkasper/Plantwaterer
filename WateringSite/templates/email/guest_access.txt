@@ -1,0 +1,18 @@
+Hey there {% if recipient["Name"] %}{{ recipient["Name"] }}{% else %}{{ recipient["Email"] }}{% endif %},
+
+You've received an invitation from {{sender.username}} ({{sender.email}}) to help care for their plants.
+You'll need an account, which you can make at HannahsPlants.party
+
+Here's the link to create an account:
+
+{{ url_for('auth.register', _external=True) }}
+
+When you have an account, you can just click the following link or paste it in your browser to add the device to your account.
+
+{{ url_for('main.grant_access', token=token, _external=True) }}
+
+This link will only be valid for 72 hours.
+Please contact the sender for more information or questions you might have.
+
+Don't overwater,
+The Plant Party Admins

@@ -1,0 +1,33 @@
+<center>
+     <link href="{{ url_for('static', filename='css/bebas-webfont.woff', _external=True) }}" rel="stylesheet" type="text/css">
+     <img src="{{ url_for('static', filename='images/plant01.png', _external=True) }}" style="width:40px;height:40px;"></img>
+     <h3 style="color:gray; font-family: 'bebasregular', sans-serif;">Hannah's Plants Party</h3>
+</center>
+
+<body>
+    <p>
+        Hey there
+        {% if recipient["Name"] %}
+            {{ recipient["Name"] }},
+        {% else %}
+            {{ recipient["Email"] }},
+        {% endif %}
+    </p>
+    <p>You've received an invitation from {{sender.username}} ({{sender.email}}) to help care for their plants.</p>
+    <p>You'll need an account, which you can make <a href="{{ url_for('auth.register', _external=True) }}">
+            here</a> at HannahsPlants.party.</p>
+    <br>
+    <p>
+        When you have an account, you can just
+        <a href="{{ url_for('main.grant_access', token=token, _external=True) }}">
+            click here</a> to add the device to your account.
+    </p>
+
+    <p>Alternatively, you can paste the following link in your browser's address bar:
+    <br>{{ url_for('main.grant_access', token=token, _external=True) }}</p>
+    <p>This link will only be valid for 72 hours.</p>
+    <p>Please contact the sender for more information or questions you might have.</p>
+    <br>
+    <p>Don't overwater,</p>
+    <p>The Plant Party Admins</p>
+</body>
